@@ -1,0 +1,31 @@
+---
+layout: post
+title:  "Jekyll(지킬) 설치법"
+cover: jekyll.png
+date:   2016-07-22 13:31:17 +0900
+categories: posts
+---
+
+먼저 자신의 컴퓨터에서 지킬을 설치하기 위해선 다음의 사항들이 요구된다.
+
+- Ruby (including development headers, v1.9.3 or above for Jekyll 2 and v2 or above for Jekyll 3)
+- RubyGems
+- Linux, Unix, or Mac OS X
+- NodeJS, or another JavaScript runtime (Jekyll 2 and earlier, for CoffeeScript support).
+- Python 2.7 (for Jekyll 2 and earlier)
+
+Windows에서의 작동은 공식적으로 지원하지 않으나, [이 문서](http://jekyllrb.com/docs/windows/#installation)를 통해 시도해볼 수 있다고 하니 참고하시라.
+
+위 조건을 갖춘 후, 다음의 커맨드를 본인의 터미널에서 직접 타이핑 하면 된다.
+
+{% highlight c %}
+~ $ gem install jekyll
+~ $ jekyll new my-awesome-site
+~ $ cd my-awesome-site
+~/my-awesome-site $ jekyll serve
+# => Now browse to http://localhost:4000
+{% endhighlight %}
+
+**참고문헌**
+
+[Jekyll](https://jekyllrb.com/)
