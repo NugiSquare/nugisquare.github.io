@@ -1,2 +1,4 @@
 name: NugiSquare
 markdown: kramdown
+kramdown:
+    input: GFM
