@@ -170,6 +170,33 @@ int main(void)
 
 {% highlight c linenos %}
 
+for(i=0; i<n; i++)
+{
+	scanf("%d %d %d", &tmpX, &tmpY, &tmpZ);
+	dot_array[i] = (dot *)malloc(sizeof(dot));
+	dot_array[i]->x = tmpX;
+	dot_array[i]->y = tmpY;
+	dot_array[i]->z = tmpZ;
+}
+
+{% endhighlight %}
+
+이 부분의 경우는 아래의 경우로 코드 단순화가 가능하다.
+
+{% highlight c linenos %}
+
+for(i=0; i<n; i++)
+    {
+    	dot_array[i] = (dot *)malloc(sizeof(dot));
+        scanf("%d %d %d", &dot_array[i]->x, &dot_array[i]->y, &dot_array[i]->z);
+    }
+
+{% endhighlight %}
+
+퀵정렬을 적용해봤다.
+
+{% highlight c linenos %}
+
 #include <stdio.h>
 #include <stdlib.h>
 
