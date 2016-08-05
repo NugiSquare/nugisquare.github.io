@@ -1,6 +1,6 @@
 #no.180
 
-
+???
 
 #no.1348
 
@@ -170,13 +170,10 @@ int main(void)
 
 {% highlight c linenos %}
 
-##입력할 자리
-
-##tmp
-
 #include <stdio.h>
 #include <stdlib.h>
 
+//sturcture definition
 typedef struct _dot {
     int x, y, z;
 } dot;
@@ -188,125 +185,153 @@ void swap(int i, int j, dot *dot_array[])
     tmp_dot = dot_array[j];
     dot_array[j] = dot_array[i];
     dot_array[i] = tmp_dot;
+    free(tmp_dot);
+}
+
+//compare
+int compare(dot *dot_array[], int index, int pivot, int sort_mode, int compflag)
+{
+	switch(sort_mode) {
+        case 1:
+            //1 : x기준 오름차순
+            if(compflag)
+            {
+            	if(dot_array[index]->x < pivot) return 1;
+            	else return 0;
+            }
+            else
+            {
+            	if(dot_array[index]->x > pivot) return 1;
+            	else return 0;
+            }
+	    break;
+        case 2:
+            //2 : x기준 내림차순
+            if(compflag)
+            {
+            	if(dot_array[index]->x > pivot) return 1;
+            	else return 0;
+            }
+            else
+            {
+            	if(dot_array[index]->x < pivot) return 1;
+            	else return 0;
+            }
+	    break;
+        case 3:
+            //3 : y기준 오름차순
+            if(compflag)
+            {
+            	if(dot_array[index]->y < pivot) return 1;
+            	else return 0;
+            }
+            else
+            {
+            	if(dot_array[index]->y > pivot) return 1;
+            	else return 0;
+            }
+	    break;
+        case 4:
+            //4 : y기준 내림차순
+            if(compflag)
+            {
+            	if(dot_array[index]->y > pivot) return 1;
+            	else return 0;
+            }
+            else
+            {
+            	if(dot_array[index]->y < pivot) return 1;
+            	else return 0;
+            }
+	    break;
+        case 5:
+            //5 : z기준 오름차순
+            if(compflag)
+            {
+            	if(dot_array[index]->z < pivot) return 1;
+            	else return 0;
+            }
+            else
+            {
+            	if(dot_array[index]->z > pivot) return 1;
+            	else return 0;
+            }
+	    break;
+        case 6:
+            //6 : z기준 내림차순
+            if(compflag)
+            {
+            	if(dot_array[index]->z > pivot) return 1;
+            	else return 0;
+            }
+            else
+            {
+            	if(dot_array[index]->z < pivot) return 1;
+            	else return 0;
+            }
+	    break;
+    }
+}
+
+//assign pivot's value
+int assign_pivot(dot *dot_array[], int left, int right, int sort_mode)
+{
+    switch(sort_mode) {
+        case 1:
+        case 2:
+            return dot_array[(left + right)/2]->x;
+        break;
+        case 3:
+        case 4:
+            return dot_array[(left + right)/2]->y;
+        break;
+        case 5:
+        case 6:
+            return dot_array[(left + right)/2]->z;
+        break;
+    }
 }
 
 //quicksort
-void quickSort(dot *dot_array[], int left, int right)
+void quickSort(dot *dot_array[], int left, int right, int sort_mode)
 {
 	int i = left, j = right;
-	int tmp;
-	int pivot = dot_array[(left + right)/2];
+	int pivot = assign_pivot(dot_array, left, right, sort_mode);
 
 	while(i <= j)
 	{
-		while(dot_array[i]<pivot) i++;
-		while(dot_array[j]>pivot) j--;
+		while(compare(dot_array, i, pivot, sort_mode, 1)) i++;
+		while(compare(dot_array, j, pivot, sort_mode, 0)) j--;
 		if(i <= j)
 		{
-			swap
+			swap(i, j, dot_array);
+			i++; j--;
 		}
 	}
+
+	if (left < j)
+            quickSort(dot_array, left, j, sort_mode);
+	if (i < right)
+            quickSort(dot_array, i, right, sort_mode);
 }
 
 int main(void)
 {
-    int n, i, j, tmpX, tmpY, tmpZ, sort_mode;
+    int n, i, tmpX, tmpY, tmpZ, sort_mode;
     scanf("%d", &n);
     dot *dot_array[n];
     for(i=0; i<n; i++)
     {
-        scanf("%d %d %d", &tmpX, &tmpY, &tmpZ);
-        dot_array[i] = (dot *)malloc(sizeof(dot));
-        dot_array[i]->x = tmpX;
-        dot_array[i]->y = tmpY;
-        dot_array[i]->z = tmpZ;
+    	dot_array[i] = (dot *)malloc(sizeof(dot));
+        scanf("%d %d %d", &dot_array[i]->x, &dot_array[i]->y, &dot_array[i]->z);
     }
     scanf("%d", &sort_mode);
-    switch(sort_mode) {
-        case 1:
-            //1 : x기준 오름차순
-
-            for(i=0; i<n-1; i++)
-            {
-                for(j=0; j<n-i-1; j++)
-                {
-                    if(dot_array[j]->x > dot_array[j+1]->x)
-                    {
-                        swap(j, dot_array);
-                    }
-                }
-            }
-            break;
-        case 2:
-            //2 : x기준 내림차순
-            for(i=0; i<n-1; i++)
-            {
-                for(j=0; j<n-i-1; j++)
-                {
-                    if(dot_array[j]->x < dot_array[j+1]->x)
-                    {
-                        swap(j, dot_array);
-                    }
-                }
-            }
-            break;
-        case 3:
-            //3 : y기준 오름차순
-            for(i=0; i<n-1; i++)
-            {
-                for(j=0; j<n-i-1; j++)
-                {
-                    if(dot_array[j]->y > dot_array[j+1]->y)
-                    {
-                        swap(j, dot_array);
-                    }
-                }
-            }
-            break;
-        case 4:
-            //4 : y기준 내림차순
-            for(i=0; i<n-1; i++)
-            {
-                for(j=0; j<n-i-1; j++)
-                {
-                    if(dot_array[j]->y < dot_array[j+1]->y)
-                    {
-                        swap(j, dot_array);
-                    }
-                }
-            }
-            break;
-        case 5:
-            //5 : z기준 오름차순
-            for(i=0; i<n-1; i++)
-            {
-                for(j=0; j<n-i-1; j++)
-                {
-                    if(dot_array[j]->z > dot_array[j+1]->z)
-                    {
-                        swap(j, dot_array);
-                    }
-                }
-            }
-            break;
-        case 6:
-            //6 : z기준 내림차순
-            for(i=0; i<n-1; i++)
-            {
-                for(j=0; j<n-i-1; j++)
-                {
-                    if(dot_array[j]->z < dot_array[j+1]->z)
-                    {
-                        swap(j, dot_array);
-                    }
-                }
-            }
-            break;
-    }
+    quickSort(dot_array, 0, n-1, sort_mode);
     for(i=0; i<n; i++)
     {
         printf("%d %d %d\n", dot_array[i]->x, dot_array[i]->y, dot_array[i]->z);
     }
+    free(dot_array);
     return 0;
 }
 
