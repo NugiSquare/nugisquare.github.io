@@ -349,8 +349,11 @@ int main(void)
     dot *dot_array[n];
     for(i=0; i<n; i++)
     {
-    	dot_array[i] = (dot *)malloc(sizeof(dot));
-        scanf("%d %d %d", &dot_array[i]->x, &dot_array[i]->y, &dot_array[i]->z);
+        scanf("%d %d %d", &tmpX, &tmpY, &tmpZ);
+        dot_array[i] = (dot *)malloc(sizeof(dot));
+        dot_array[i]->x = tmpX;
+        dot_array[i]->y = tmpY;
+        dot_array[i]->z = tmpZ;
     }
     scanf("%d", &sort_mode);
     quickSort(dot_array, 0, n-1, sort_mode);
@@ -474,6 +477,100 @@ int main(void)
         if(i==0) { start = vtx1; }
         insert_node(vtx1, vtx2, vertexs);
         insert_node(vtx2, vtx1, vertexs);
+    }
+
+    dfs(start, vertexs);
+
+    return 0;
+}
+
+{% endhighlight %}
+
+이 경우에 전혀 예상하지 못한 오류가 생겼다. 링크드리스트를 생성하는 와중에 복수의 edge인지 다음 vertex의 edge인지 구분을 하지 못하는 것이다. 인접 리스트 라는 것을 참고하여 다시 작성하였다.
+
+{% highlight c linenos %}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define TRUE 1
+#define FALSE 0
+
+typedef struct _vertex
+{
+    int index, visited;
+    struct _vertex* next_vertex;
+} vertex;
+
+typedef struct _vertex_list
+{
+	struct _vertex* vertex;
+    struct _vertex_list* next_vertex;
+} vertex_list;
+
+void insert_node(int vtx1, int vtx2, vertex_list *vl)
+{
+	int i;
+	for(i=1; i<vtx1; i++)
+	{
+		vl = vl->next_vertex;
+	}
+	vl->vertex = (vertex *) malloc(sizeof(vertex));
+	vl->vertex->index = i;
+	vl->vertex->visited = FALSE;
+	vl->vertex->next_vertex = NULL;
+}
+
+void dfs(int start, vertex *vertexs[])
+{
+    printf("%d ", start);
+    vertexs[start]->visited = TRUE;
+
+    while (vertexs[start]->next_vertex != NULL) {
+        if(vertexs[start]->next_vertex->visited == TRUE) {
+            vertex *tmp_vertex = (vertex *) malloc(sizeof(vertex));
+            tmp_vertex = vertexs[start]->next_vertex;
+            vertexs[start]->next_vertex = vertexs[start]->next_vertex->next_vertex;
+        }
+        else {
+            vertex *tmp_vertex = (vertex *) malloc(sizeof(vertex));
+            tmp_vertex = vertexs[start]->next_vertex;
+            vertexs[start]->next_vertex = vertexs[start]->next_vertex->next_vertex;
+            dfs(tmp_vertex->index, vertexs);
+        }
+    }
+}
+
+int main(void)
+{
+    int num_vertex, num_edge, i, vtx1, vtx2, start;
+
+    scanf("%d %d", &num_vertex, &num_edge);
+
+	vertex_list vl;
+	vl = (vertex_list *) malloc(sizeof(vertex_list));
+	vl->vertex = NULL;
+	vl->next_vertex = NULL;
+
+	tmp_vl = (vertex_list *) malloc(sizeof(vertex_list));
+	tmp_vl = vl;
+
+    for(i=0; i<num_vertex; i++)
+    {
+        tmp_vl->vertex = (vertex *) malloc(sizeof(vertex));
+        tmp_vl->vertex->index = i;
+        tmp_vl->vertex->visited = FALSE;
+        tmp_vl->vertex->next_vertex = NULL;
+		tmp_vl->next_vertex = (vertex_list *) malloc(sizeof(vertex_list));
+		tmp_vl = tmp_vl->next_vertex;
+    }
+
+    for(i=0; i<num_edge; i++)
+    {
+        scanf("%d %d", &vtx1, &vtx2);
+        if(i==0) { start = vtx1; }
+        insert_node(vtx1, vtx2, vl);
+        insert_node(vtx2, vtx1, vl);
     }
 
     dfs(start, vertexs);
