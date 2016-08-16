@@ -168,13 +168,16 @@ a:hover {
 
 /* standard */
 .post pre {
+  font-family: Courier, Arial, sans-serif;
+  color: #cccccc;
   border: 1px solid #ddd;
-  background-color: #eee;
+  background-color: #333333;
   padding: 0 .4em;
 }
 
 .post p {
-  font-family: 'Source Sans Pro', Arial, sans-serif;
+  font-family: Courier, Arial, sans-serif;
+  /* font-family: 'Source Sans Pro', Arial, sans-serif; */
   font-size: 17px;
   margin-bottom: 1.45em;
   text-align: justify;
@@ -187,7 +190,8 @@ a:hover {
 
 .post code {
   border: 1px solid #ddd;
-  background-color: #eee;
+  background-color: #333333;
+  color: #cccccc;
   padding: 0 .2em;
 }
 
