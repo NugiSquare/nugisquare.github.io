@@ -410,120 +410,7 @@ int main(void)
 - [switch case 예제](http://mwultong.blogspot.com/2007/03/c-switch-switch-case-default-statement.html)
 - [C 주석 스타일(영어)](https://msdn.microsoft.com/en-us/library/wfwda74e.aspx)
 
-#no.169
-
-    Background
-
-    깊이우선탐색(DFS)는 그래프의 임의의 한 정점에서 출발하여, 연결된 정점들 중 하나에 대해서 깊이 순으로 먼저 탐색해 나가는 탐색법이다. 예를 들어 다음과 같은 그래프를 보자.
-
-    <이미지>
-
-    이 그리프에서 1번 정점에서 출발한 깊이우선탐색 결과는 다음과 같다.
-
-    1-2-3-4-6-5-7
-
-    (단, 한 점정에서 갈 수 있는 곳이 여러 곳일 먼저 입력된 정점 부터 먼저 방문한다. FIFO 즉, 2 4, 2 3 순으로 입력되었다면 2번 정점에서 4번을 먼저 방문하고 나중에 3번을 방문하도록 작성해야 한다.)
-    문제에 주어지는 모든 그래프는 양방향 무가중치 그래프이다.
-    Input
-
-    첫 번째 줄에 정점의 수와 간선의 수가 공백으로 구분되어 입력된다. (단 정점은 100개 이하, 간선은 200개 이하임)
-    둘 째 줄부터 간선의 수에 해당되는 줄 만큼 한 줄에 한 간선의 출발점과 도착점이 공백으로 구분되어 입력된다.
-    Output
-
-    DFS순회 결과를 공백으로 구분하여 출력한다. (출발점은 1)
-    IO Example
-
-    입력
-    7 8
-    1 2
-    1 4
-    1 5
-    2 3
-    3 4
-    3 7
-    4 6
-    5 6
-
-    출력
-    1 2 3 4 6 5 7
-
-    DATA제작 및 정답제작 : 이승현(27th)
-
-FIFO라 인접행렬에 큐를 삽입한 형태를 처음엔 생각하였으나, 인접 리스트를 사용하는 것이 더 깔끔한 코드가 될 것이라 생각해 진행해보았다.
-
-{% highlight c linenos %}
-
-#include <stdio.h>
-#include <stdlib.h>
-
-#define TRUE 1
-#define FALSE 0
-
-typedef struct _vertex
-{
-    int index, visited;
-    struct _vertex* next_vertex;
-} vertex;
-
-void insert_node(int vtx1, int vtx2, vertex *vertexs[])
-{
-    vertex *tmp_vertex = (vertex *) malloc(sizeof(vertex));
-    vertex *new_vertex = (vertex *) malloc(sizeof(vertex));
-    tmp_vertex = vertexs[vtx1];
-    while(tmp_vertex->next_vertex != NULL) {
-        tmp_vertex = tmp_vertex->next_vertex;
-    }
-    tmp_vertex->next_vertex = vertexs[vtx2];
-}
-
-void dfs(int start, vertex *vertexs[])
-{
-    printf("%d ", start);
-    vertexs[start]->visited = TRUE;
-
-    while (vertexs[start]->next_vertex != NULL) {
-        if(vertexs[start]->next_vertex->visited == TRUE) {
-            vertex *tmp_vertex = (vertex *) malloc(sizeof(vertex));
-            tmp_vertex = vertexs[start]->next_vertex;
-            vertexs[start]->next_vertex = vertexs[start]->next_vertex->next_vertex;
-        }
-        else {
-            vertex *tmp_vertex = (vertex *) malloc(sizeof(vertex));
-            tmp_vertex = vertexs[start]->next_vertex;
-            vertexs[start]->next_vertex = vertexs[start]->next_vertex->next_vertex;
-            dfs(tmp_vertex->index, vertexs);
-        }
-    }
-}
-
-int main(void)
-{
-    int num_vertex, num_edge, i, vtx1, vtx2, start;
-    scanf("%d %d", &num_vertex, &num_edge);
-    vertex *vertexs[num_vertex];
-    for(i=0; i<num_vertex; i++)
-    {
-        vertexs[i] = (vertex *) malloc(sizeof(vertex));
-        vertexs[i]->index = i;
-        vertexs[i]->visited = FALSE;
-        vertexs[i]->next_vertex = NULL;
-    }
-    for(i=0; i<num_edge; i++)
-    {
-        scanf("%d %d", &vtx1, &vtx2);
-        if(i==0) { start = vtx1; }
-        insert_node(vtx1, vtx2, vertexs);
-        insert_node(vtx2, vtx1, vertexs);
-    }
-
-    dfs(start, vertexs);
-
-    return 0;
-}
-
-{% endhighlight %}
-
-이 경우에 전혀 예상하지 못한 오류가 생겼다. 링크드리스트를 생성하는 와중에 복수의 edge인지 다음 vertex의 edge인지 구분을 하지 못하는 것이다. 인접 리스트 라는 것을 참고하여 다시 작성하였다.
+#no.171
 
 {% highlight c linenos %}
 
@@ -565,29 +452,38 @@ int addEdge(node *nodes[], int node1, int node2)
 	return 0;
 }
 
-int dfs(node *nodes[], int start)
+int addQueue(queue *bfs_queue, int input)
+{
+	bfs_queue->next = (queue *)malloc(sizeof(queue));
+	bfs_queue->next->node_index = input;
+	bfs_queue->next->next = NULL;
+}
+
+int bfs(node *nodes[], queue *bfs_queue, int start)
 {
 	int destination;
-	printf("%d ", start);
-	nodes[start]->visit_flag = 1;
-	while(1)
+	queue *tmp_queue = NULL;
+	while(bfs_queue != NULL)
 	{
-		if(nodes[start]->node_queue == NULL)
+		while(nodes[start]->node_queue != NULL)
 		{
-			return 0;
+			addQueue(bfs_queue, nodes[start]->node_queue->node_index);
+			nodes[start]->node_queue = nodes[start]->node_queue->next;
 		}
-		else
+		
+		tmp_queue = bfs_queue;
+
+		while(tmp_queue != NULL)
 		{
-			destination = nodes[start]->node_queue->node_index;
-			if(nodes[destination]->visit_flag == 1)
+			destination = tmp_queue->node_index;
+			if(!nodes[destination]->visit_flag)
 			{
-				nodes[start]->node_queue = nodes[start]->node_queue->next;
+				printf("%d ", destination);
+				nodes[destination]->visit_flag = 1;
+				bfs(nodes, bfs_queue, destination);
 			}
-			else
-			{
-				nodes[start]->node_queue = nodes[start]->node_queue->next;
-				dfs(nodes, destination);
-			}
+			bfs_queue = bfs_queue->next;
+			tmp_queue = tmp_queue->next;
 		}
 	}
 	return 0;
@@ -612,8 +508,12 @@ int main(void)
 		addEdge(nodes, node1, node2);
 		addEdge(nodes, node2, node1);
 	}
-	//dfs
-	dfs(nodes, 1);
+	//init bfs_queue
+	queue *bfs_queue = (queue *)malloc(sizeof(queue));
+	bfs_queue->node_index = 1;
+	bfs_queue->next = NULL;
+	//bfs
+	bfs(nodes, bfs_queue, 1);
 	return 0;
 }
 
