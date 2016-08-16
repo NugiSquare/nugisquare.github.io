@@ -1,5 +1,101 @@
 #no.180
 
+#include <stdio.h>
+
+typedef struct node
+{
+	int content;
+	*node parent;
+	*node left;
+	*node right;
+}
+
+int init(*node nd, int input, *node pt, *node lf, *node rg)
+{
+	nd = (node *)malloc(sizeof(node));
+	nd->content = input;
+	nd->parent = pt;
+	nd->left = lf;
+	nd->right = rg;
+}
+
+int main(void)
+{
+	int count, i, tmp_input;
+	*node root, tmp_node;
+	scanf("%d", &count);
+	for(i=0; i<count; i++)
+	{
+		scanf("%d", &tmp_input);
+		if(i == 0)
+		{
+			init(root, tmp_input, NULL, NULL, NULL);
+			tmp_node = root;
+		}
+		else
+		{
+			
+		}
+	}
+}
+
+#no.860
+
+#include <stdio.h>
+#include <string.h>
+
+long long prime_number(int k, long long *array)
+{
+	if(array[k] != 0)
+	{
+		return array[k];
+	}
+	else
+	{
+		int flag = 0;
+		int divide_flag = 0;
+		int i;
+		if(array[k-1] == 0)
+		{
+			array[k-1] = prime_number(k-1, array);
+		}
+		int ans = array[k-1];
+		while(!flag)
+		{
+			ans++; divide_flag = 0;
+			for(i=1; i<k; i++)
+			{
+				if(ans % array[i] == 0)
+				{
+					divide_flag = 1;
+				}
+				if(divide_flag)
+					break;
+			}
+			if(!divide_flag)
+				flag = 1;
+		}
+		return ans;
+	}
+}
+
+int main(void)
+{
+	int k;
+	long long ans;
+
+	scanf("%d", &k);
+
+	long long array[k+1];
+	memset( array, 0, (k+1)*sizeof(long long) );
+	array[1] = 2;
+
+	ans = prime_number(k, array);
+	printf("%d", ans);
+}
+
+#no.180
+
 ???
 
 #no.1348
