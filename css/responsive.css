@@ -1,7 +1,8 @@
-@media (max-width:1309px) {
+@media (max-width:2009px) {
   #cover-photo {
-    width : 95%;
-    max-width: 734px;
+    width : 100%;
+    max-width: 725px;
+    border-radius: 0 0 20px 20px;
   }
 
   .header {
@@ -85,7 +86,7 @@
 
 /* add because of image size issue */
 #cover-photo {
-    max-width: 734px;
+    max-width: 725px;
 }
 
 /*****************************************************************************/
