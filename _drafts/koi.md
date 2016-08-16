@@ -34,69 +34,10 @@ int main(void)
 		}
 		else
 		{
-			
+
 		}
 	}
 }
-
-#no.860
-
-#include <stdio.h>
-#include <string.h>
-
-long long prime_number(int k, long long *array)
-{
-	if(array[k] != 0)
-	{
-		return array[k];
-	}
-	else
-	{
-		int flag = 0;
-		int divide_flag = 0;
-		int i;
-		if(array[k-1] == 0)
-		{
-			array[k-1] = prime_number(k-1, array);
-		}
-		int ans = array[k-1];
-		while(!flag)
-		{
-			ans++; divide_flag = 0;
-			for(i=1; i<k; i++)
-			{
-				if(ans % array[i] == 0)
-				{
-					divide_flag = 1;
-				}
-				if(divide_flag)
-					break;
-			}
-			if(!divide_flag)
-				flag = 1;
-		}
-		return ans;
-	}
-}
-
-int main(void)
-{
-	int k;
-	long long ans;
-
-	scanf("%d", &k);
-
-	long long array[k+1];
-	memset( array, 0, (k+1)*sizeof(long long) );
-	array[1] = 2;
-
-	ans = prime_number(k, array);
-	printf("%d", ans);
-}
-
-#no.180
-
-???
 
 #no.1348
 
@@ -589,89 +530,91 @@ int main(void)
 #include <stdio.h>
 #include <stdlib.h>
 
-#define TRUE 1
-#define FALSE 0
-
-typedef struct _vertex
+typedef struct queue
 {
-    int index, visited;
-    struct _vertex* next_vertex;
-} vertex;
+	int node_index;
+	struct queue* next;
+} queue;
 
-typedef struct _vertex_list
+typedef struct node
 {
-	struct _vertex* vertex;
-    struct _vertex_list* next_vertex;
-} vertex_list;
+	int visit_flag;
+	queue* node_queue;
+} node;
 
-void insert_node(int vtx1, int vtx2, vertex_list *vl)
+int addEdge(node *nodes[], int node1, int node2)
 {
-	int i;
-	for(i=1; i<vtx1; i++)
+	queue *tmp_queue = NULL;
+	if(nodes[node1]->node_queue == NULL)
 	{
-		vl = vl->next_vertex;
+		nodes[node1]->node_queue = (queue *)malloc(sizeof(queue));
+		nodes[node1]->node_queue->node_index = node2;
+		nodes[node1]->node_queue->next = NULL;
 	}
-	vl->vertex = (vertex *) malloc(sizeof(vertex));
-	vl->vertex->index = i;
-	vl->vertex->visited = FALSE;
-	vl->vertex->next_vertex = NULL;
+	else
+	{
+		tmp_queue = nodes[node1]->node_queue;
+		while(tmp_queue->next != NULL)
+		{
+			tmp_queue = tmp_queue->next;
+		}
+		tmp_queue->next = (queue *)malloc(sizeof(queue));
+		tmp_queue->next->node_index = node2;
+		tmp_queue->next->next = NULL;
+	}
+	return 0;
 }
 
-void dfs(int start, vertex *vertexs[])
+int dfs(node *nodes[], int start)
 {
-    printf("%d ", start);
-    vertexs[start]->visited = TRUE;
-
-    while (vertexs[start]->next_vertex != NULL) {
-        if(vertexs[start]->next_vertex->visited == TRUE) {
-            vertex *tmp_vertex = (vertex *) malloc(sizeof(vertex));
-            tmp_vertex = vertexs[start]->next_vertex;
-            vertexs[start]->next_vertex = vertexs[start]->next_vertex->next_vertex;
-        }
-        else {
-            vertex *tmp_vertex = (vertex *) malloc(sizeof(vertex));
-            tmp_vertex = vertexs[start]->next_vertex;
-            vertexs[start]->next_vertex = vertexs[start]->next_vertex->next_vertex;
-            dfs(tmp_vertex->index, vertexs);
-        }
-    }
+	int destination;
+	printf("%d ", start);
+	nodes[start]->visit_flag = 1;
+	while(1)
+	{
+		if(nodes[start]->node_queue == NULL)
+		{
+			return 0;
+		}
+		else
+		{
+			destination = nodes[start]->node_queue->node_index;
+			if(nodes[destination]->visit_flag == 1)
+			{
+				nodes[start]->node_queue = nodes[start]->node_queue->next;
+			}
+			else
+			{
+				nodes[start]->node_queue = nodes[start]->node_queue->next;
+				dfs(nodes, destination);
+			}
+		}
+	}
+	return 0;
 }
 
 int main(void)
 {
-    int num_vertex, num_edge, i, vtx1, vtx2, start;
-
-    scanf("%d %d", &num_vertex, &num_edge);
-
-	vertex_list vl;
-	vl = (vertex_list *) malloc(sizeof(vertex_list));
-	vl->vertex = NULL;
-	vl->next_vertex = NULL;
-
-	tmp_vl = (vertex_list *) malloc(sizeof(vertex_list));
-	tmp_vl = vl;
-
-    for(i=0; i<num_vertex; i++)
-    {
-        tmp_vl->vertex = (vertex *) malloc(sizeof(vertex));
-        tmp_vl->vertex->index = i;
-        tmp_vl->vertex->visited = FALSE;
-        tmp_vl->vertex->next_vertex = NULL;
-		tmp_vl->next_vertex = (vertex_list *) malloc(sizeof(vertex_list));
-		tmp_vl = tmp_vl->next_vertex;
-    }
-
-    for(i=0; i<num_edge; i++)
-    {
-        scanf("%d %d", &vtx1, &vtx2);
-        if(i==0) { start = vtx1; }
-        insert_node(vtx1, vtx2, vl);
-        insert_node(vtx2, vtx1, vl);
-    }
-
-    dfs(start, vertexs);
-
-    return 0;
+	int i, node_count, edge_count, node1, node2;
+	scanf("%d %d", &node_count, &edge_count);
+	node *nodes[node_count+1];
+	//init nodes
+	for(i=1; i<=node_count; i++)
+	{
+		nodes[i] = (node *)malloc(sizeof(node));
+		nodes[i]->visit_flag = 0;
+		nodes[i]->node_queue = NULL;
+	}
+	//init edges
+	for(i=0; i<edge_count; i++)
+	{
+		scanf("%d %d", &node1, &node2);
+		addEdge(nodes, node1, node2);
+		addEdge(nodes, node2, node1);
+	}
+	//dfs
+	dfs(nodes, 1);
+	return 0;
 }
 
 {% endhighlight %}
