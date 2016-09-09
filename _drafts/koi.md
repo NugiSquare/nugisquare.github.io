@@ -454,9 +454,14 @@ int addEdge(node *nodes[], int node1, int node2)
 
 int addQueue(queue *bfs_queue, int input)
 {
-	bfs_queue->next = (queue *)malloc(sizeof(queue));
-	bfs_queue->next->node_index = input;
-	bfs_queue->next->next = NULL;
+	queue *tmp_queue = bfs_queue;
+	while(tmp_queue->next != NULL)
+	{
+		tmp_queue = tmp_queue->next;
+	}
+	tmp_queue->next = (queue *)malloc(sizeof(queue));
+	tmp_queue->next->node_index = input;
+	tmp_queue->next->next = NULL;
 }
 
 int bfs(node *nodes[], queue *bfs_queue, int start)
@@ -470,7 +475,7 @@ int bfs(node *nodes[], queue *bfs_queue, int start)
 			addQueue(bfs_queue, nodes[start]->node_queue->node_index);
 			nodes[start]->node_queue = nodes[start]->node_queue->next;
 		}
-		
+
 		tmp_queue = bfs_queue;
 
 		while(tmp_queue != NULL)
